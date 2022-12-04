@@ -18,6 +18,17 @@ Ideas:
     letters in each half, then take the intersect of the sets - there should be
     exactly 1 item that both halves share.
 
+EDIT: There's a second half to the problem! Here, each group of 3 "rucksacks"
+(i.e. strings) is carried by a group of elves, who should share exactly 1
+"badge" item in all their rucksacks - i.e. we're doing the same problem, but
+finding the 1 item shared between all 3 rucksacks (instead of 2 halves of the
+same rucksack).
+
+So, changes required to do this will be to find the shared item between 3 groups
+instead of just 2, and to change the group creation logic to be "3 groups of
+rucksacks" instead of "2 groups in a single rucksack". Make the intersection
+code more generic, and change the grouping. Should be fairly easy.
+
 OUTCOME:
 -   Got the first half right with 7763! Wait...that was just the first half?
 """
@@ -28,14 +39,21 @@ def get_unique_items(compartment: str) -> Set[str]:
     return set(compartment)
 
 
+def get_shared_items(item_groups: List[str]) -> str:
+    assert len(item_groups) > 1
+    unique_item_groups = [get_unique_items(group) for group in item_groups]
+    # TODO: Try to get this in a more elegant way?
+    shared_items = unique_item_groups[0]
+    for group in unique_item_groups:
+        shared_items = shared_items.intersection(group)
+    return shared_items
+
+
 def get_misplaced_item(rucksack: str) -> str:
     compartment1 = rucksack[:len(rucksack)//2]
     compartment2 = rucksack[len(rucksack)//2:]
 
-    items1 = get_unique_items(compartment1)
-    items2 = get_unique_items(compartment2)
-
-    shared_items = items1.intersection(items2)
+    shared_items = get_shared_items([compartment1, compartment2])
     assert len(shared_items) == 1
     return shared_items.pop()
 
@@ -55,7 +73,7 @@ def get_item_priority_sum(rucksacks: List[str]) -> int:
     return sum(item_priority(item) for item in misplaced_items)
 
 
-def test_example_problem():
+def test_first_example_problem():
     input_rucksacks = [
         "vJrwpWtwJgWrhcsFMMfFFhFp",
         "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
@@ -67,8 +85,20 @@ def test_example_problem():
     assert get_item_priority_sum(input_rucksacks) == 157
 
 
+def test_second_example_problem():
+    input_rucksacks = [
+        "vJrwpWtwJgWrhcsFMMfFFhFp",
+        "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
+        "PmmdzqPrVvPwwTWBwg",
+        "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
+        "ttgJtRGJQctTZtZT",
+        "CrZsJsPPZsGzwwsLwLmpwMDw",
+    ]
+    assert get_badge_priority_sum(rucksacks) == 70
+
+
 if __name__ == "__main__":
-    test_example_problem()
+    test_first_example_problem()
 
     rucksacks = [
         "WVHGHwddqSsNjsjwqVvdwZRCbcJcZTCcsZbLcJJsCZ",
