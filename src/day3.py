@@ -31,22 +31,17 @@ code more generic, and change the grouping. Should be fairly easy.
 
 OUTCOME:
 -   Got the first half right with 7763! Wait...that was just the first half?
+-   Got the second half right, too! (2569)
 """
+from functools import reduce
 from typing import List, Set
-
-
-def get_unique_items(compartment: str) -> Set[str]:
-    return set(compartment)
 
 
 def get_shared_items(item_groups: List[str]) -> Set[str]:
     assert len(item_groups) > 1
-    unique_item_groups = [get_unique_items(group) for group in item_groups]
-    # TODO: Try to get this in a more elegant way?
-    shared_items = unique_item_groups[0]
-    for group in unique_item_groups:
-        shared_items = shared_items.intersection(group)
-    return shared_items
+    unique_item_groups = [set(group) for group in item_groups]
+    shared_items = reduce(lambda a,b: a.intersection(b), unique_item_groups)
+    return set(shared_items)
 
 
 def get_misplaced_item(rucksack: str) -> str:
@@ -425,3 +420,4 @@ if __name__ == "__main__":
     test_second_example_problem()
     priority_sum = get_badge_priority_sum(rucksacks)
     print(f"Badge items' priority sum: {priority_sum}")
+    assert priority_sum == 2569
