@@ -39,7 +39,7 @@ def get_unique_items(compartment: str) -> Set[str]:
     return set(compartment)
 
 
-def get_shared_items(item_groups: List[str]) -> str:
+def get_shared_items(item_groups: List[str]) -> Set[str]:
     assert len(item_groups) > 1
     unique_item_groups = [get_unique_items(group) for group in item_groups]
     # TODO: Try to get this in a more elegant way?
@@ -85,6 +85,22 @@ def test_first_example_problem():
     assert get_item_priority_sum(input_rucksacks) == 157
 
 
+def get_badge_item(rucksacks: List[str]) -> str:
+    shared_items = get_shared_items(rucksacks)
+    assert len(shared_items) == 1
+    return shared_items.pop()
+
+
+def get_badge_priority_sum(rucksacks: List[str], elf_group_size: int=3) -> int:
+    def _group(items: list, n: int) -> List[tuple]:
+        return [items[i:i+n] for i in range(0, len(items), n)]
+
+    badge_items = [
+        get_badge_item(group) for group in _group(rucksacks, elf_group_size)
+    ]
+    return sum(item_priority(item) for item in badge_items)
+
+
 def test_second_example_problem():
     input_rucksacks = [
         "vJrwpWtwJgWrhcsFMMfFFhFp",
@@ -94,7 +110,7 @@ def test_second_example_problem():
         "ttgJtRGJQctTZtZT",
         "CrZsJsPPZsGzwwsLwLmpwMDw",
     ]
-    assert get_badge_priority_sum(rucksacks) == 70
+    assert get_badge_priority_sum(input_rucksacks) == 70
 
 
 if __name__ == "__main__":
@@ -403,5 +419,9 @@ if __name__ == "__main__":
         "hgLcgcLpJSMwzmrmzqQrmp",
     ]
     priority_sum = get_item_priority_sum(rucksacks)
+    print(f"Misplaced items' priority sum: {priority_sum}")
     assert priority_sum == 7763
-    print(priority_sum)
+
+    test_second_example_problem()
+    priority_sum = get_badge_priority_sum(rucksacks)
+    print(f"Badge items' priority sum: {priority_sum}")
