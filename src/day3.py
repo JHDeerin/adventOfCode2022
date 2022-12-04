@@ -17,6 +17,9 @@ Ideas:
 -   For finding the duplicate letter, split the string in half, get the set of
     letters in each half, then take the intersect of the sets - there should be
     exactly 1 item that both halves share.
+
+OUTCOME:
+-   Got the first half right with 7763! Wait...that was just the first half?
 """
 from typing import List, Set
 
@@ -369,4 +372,6 @@ if __name__ == "__main__":
         "cFcSvgJvfhfLnShtMJtPHRRvRbBBGBPNBHPbND",
         "hgLcgcLpJSMwzmrmzqQrmp",
     ]
-    print(get_item_priority_sum(rucksacks))
+    priority_sum = get_item_priority_sum(rucksacks)
+    assert priority_sum == 7763
+    print(priority_sum)
