@@ -18,6 +18,39 @@ Ideas:
     letters in each half, then take the intersect of the sets - there should be
     exactly 1 item that both halves share.
 """
+from typing import List, Set
+
+
+def get_unique_items(compartment: str) -> Set[str]:
+    return set(compartment)
+
+
+def get_misplaced_item(rucksack: str) -> str:
+    compartment1 = rucksack[:len(rucksack)//2]
+    compartment2 = rucksack[len(rucksack)//2:]
+
+    items1 = get_unique_items(compartment1)
+    items2 = get_unique_items(compartment2)
+
+    shared_items = items1.intersection(items2)
+    assert len(shared_items) == 1
+    return shared_items.pop()
+
+
+def item_priority(item: str) -> int:
+    assert len(item) == 1
+    is_capital_letter = item < "a"
+    if is_capital_letter:
+        priority = ord(item) - 38
+    else:
+        priority = ord(item) - 96
+    return priority
+
+
+def get_item_priority_sum(rucksacks: List[str]) -> int:
+    misplaced_items = [get_misplaced_item(rucksack) for rucksack in rucksacks]
+    return sum(item_priority(item) for item in misplaced_items)
+
 
 def test_example_problem():
     input_rucksacks = [
