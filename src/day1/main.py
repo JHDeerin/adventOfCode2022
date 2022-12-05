@@ -14,9 +14,32 @@ OUTCOME: Got it right! (69501)
 
 PART 2: The elves want to know the sum of the top 3 elves categories
 
-OUTCOME: TODO
+OUTCOME: Got it right! (202346)
+-   While doing this, though, I originally wasn't passing a test case;
+    discovered a bug when I was reading in the list the first time (I was
+    forgetting to add the last item - classic off-by-one error because I was
+    parsing in each elf and ending when I reached a newline).
+    -   I probably could've avoided this error by parsing a different way; maybe
+        by parsing all the ints first (w/ blank lines as "-1") and THEN
+        splitting the groups up based on that? Or by adding a blank line to the
+        input to make sure nothing is a special case?
 
-REFLECTIONS: TODO
+REFLECTIONS:
+-   Process feels decently down; there are some micro-optimizations I could
+    make, I'm sure, but I didn't have to write much more code than necessary
+-   I don't like stateful parsing solutions, but I'm not sure how to do this
+    one without it?
+-   Completely unrelated, but betaveros (one of the best Advent of Code
+    speedcoders) is doing the challenge in his own language
+    (https://github.com/betaveros/advent-of-code-2022), and recommended
+    "Crafting Interpreters" by Bob Nystrom (the same guy who wrote the awesome
+    "Game Programming Patterns" book that I really need to finish)
+        -   Holy cow, his solution is 7 lines long (I know it's designed as a
+            code golfing language, and he did say he cleans up his solutions
+            before posting, but still!)
+        -   Okay, his functional solution (as far as I can tell) was to read the
+            whole thing in as a string, split wherever there were 2 newlines in
+            a row, parse everything remaining into integers, then sum them
 """
 from typing import List
 
