@@ -1,9 +1,16 @@
 """
-TODO
+We need to collect "star"fruit by solving puzzles, so we can feed the reindeer
+to give them magical powers. The elves are on an expedition to find the fruit.
 
-PART 1: TODO
+The puzzle input is a list of how many calories each elf is carrying; each elf's
+inentory is separated from the other elves by a blank line
 
-OUTCOME: TODO
+PART 1: Find the elf with the most number of calories; how many calories are
+they carrying?
+-   Pretty easy; just parse each elf's inventory, then get the total number of
+    calories, then get the max of that
+
+OUTCOME: Got it right! (69501)
 
 PART 2: TODO
 
@@ -14,14 +21,28 @@ REFLECTIONS: TODO
 from typing import List
 
 
-def part1(input: List[str]):
-    pass
+def parse_elf_inventories(input: List[str]) -> List[List[int]]:
+    elf_inventories = []
+    current_elf = []
+    for item in input:
+        try:
+            current_elf.append(int(item))
+        except ValueError:
+            elf_inventories.append(current_elf)
+            current_elf = []
+    return elf_inventories
+
+
+def part1(input: List[str]) -> int:
+    elf_inventories = parse_elf_inventories(input)
+    elf_calories = [sum(elf) for elf in elf_inventories]
+    return max(elf_calories)
 
 
 def test_first_example():
     with open("test.txt") as file:
         test_input = file.read().splitlines()
-    assert part1(test_input) == 0
+    assert part1(test_input) == 24000
 
 
 def part2(input: List[str]):
@@ -41,6 +62,7 @@ if __name__ == "__main__":
     test_first_example()
     result = part1(input)
     print(f"part 1: {result}")
+    assert result == 69501
 
     test_second_example()
     result = part2(input)
