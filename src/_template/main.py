@@ -15,23 +15,23 @@ from typing import List
 
 
 def part1(input: List[str]):
-    # TODO: Implement this!
     pass
 
 
 def test_first_example():
     with open("test.txt") as file:
         test_input = file.read().splitlines()
+    assert part1(test_input) == 0
 
 
 def part2(input: List[str]):
-    # TODO: Implement this!
     pass
 
 
 def test_second_example():
     with open("test.txt") as file:
         test_input = file.read().splitlines()
+    assert part2(test_input) == 0
 
 
 if __name__ == "__main__":
