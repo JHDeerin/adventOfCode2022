@@ -13,7 +13,18 @@ For part 1, in how many of these pairs does one range entirely include another?
 
 OUTCOME: Got it right! (459)
 
-for part 2:
+For part 2: We want to know ALL the pairs that have ANY overlap (not just
+subsets)
+-   This should be doable by just seeing if either min/max of one is within the
+    range of the other (e.g. for "2-8,3-7", check 2 <= 3 <= 8 OR 2 <= 7 <= 8)
+
+OUTCOME: Got the wrong answer at first (700 was too low). Trying again:
+    -   Okay, my overlapping algorithm was clearly wrong; why?
+        -   I was checking to see if the 2nd one's bounds were contained in the
+            1st item, BUT this fails in the case that the 1st is a strict subset
+            of the 2nd - so it would undercount. Shoot.
+        -   Revising this and trying again...yup, that was the correct answer!
+            (779)
 """
 import re
 from typing import List
@@ -40,7 +51,6 @@ def is_contained_pair(pair: List[str]) -> bool:
 
 def get_contained_pairs(group_strs: List[str]) -> int:
     pairs = parse_groups(group_strs)
-    assert len(pairs[0]) == 2
     return len([pair for pair in pairs if is_contained_pair(pair)])
 
 
@@ -54,6 +64,31 @@ def test_first_example():
         "2-6,4-8",
     ]
     assert get_contained_pairs(input_pairs) == 2
+
+
+def is_overlapping_pair(pair: List[str]) -> bool:
+    assert len(pair) == 2
+    a, b = pair[0], pair[1]
+    a_overlaps_b = (a[0] <= b[0] <= a[1]) or (a[0] <= b[1] <= a[1])
+    b_overlaps_a = (b[0] <= a[0] <= b[1]) or (b[0] <= a[1] <= b[1])
+    return a_overlaps_b or b_overlaps_a
+
+
+def get_overlapping_pairs(group_strs: List[str]) -> int:
+    pairs = parse_groups(group_strs)
+    return len([pair for pair in pairs if is_overlapping_pair(pair)])
+
+
+def test_second_example():
+    input_pairs = [
+        "2-4,6-8",
+        "2-3,4-5",
+        "5-7,7-9",
+        "2-8,3-7",
+        "6-6,4-6",
+        "2-6,4-8",
+    ]
+    assert get_overlapping_pairs(input_pairs) == 4
 
 
 if __name__ == "__main__":
@@ -1063,3 +1098,8 @@ if __name__ == "__main__":
     part1 = get_contained_pairs(input)
     print(f"part 1: {part1}")
     assert part1 == 459
+
+    test_second_example()
+    part2 = get_overlapping_pairs(input)
+    print(f"part 2: {part2}")
+    assert part2 == 779
