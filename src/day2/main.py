@@ -11,12 +11,37 @@ exactly.
 
 OUTCOME: Got it right! (13484)
 
-PART 2: It turns out the end is ACTUALLY what outcome the round needs, and we
-need to pick the correct shape based on what our opponent played.
+PART 2: It turns out the 2nd letter is ACTUALLY what outcome the round needs,
+and we need to pick the correct shape based on what our opponent played.
+-   How to do this? Basically, I'll hardcode every possible case
 
 OUTCOME: Got it right! (13433)
 
-REFLECTIONS: TODO
+REFLECTIONS:
+-   Like in the actual problem, assuming the meaning of the 2nd row meant I
+    was caught flat-footed when the meaning changed, and I had to rewrite the
+    function (or, in my case, copy-paste it). Not sure if this was avoidable
+    or not
+-   The way I coded the wins/needed moves feels inelegant; clean this up? How
+    can I do this without hardcoding everything?
+    -   It seems like we could derive this if we knew the rules of the game; the
+        minimum needed rules are "rock > scissors", "scissors > paper",
+        "paper > rock", and matches are ties (4 items).
+        -   This could be represented by a dictionary of items and their counter
+            (kind of like pokemon weaknesses)
+    -   So, I think the "get round outcome" function is actually pretty ideal
+    -   The "get needed shape", then, could be derived by saying:
+        -   If we need a tie, return the same item
+        -   If we need a win, look up the item's counter
+        -   If we need a loss, invert the dictionary and look up the item
+    -   I think that's the best we could do? (Maybe explore some other
+        solutions people came up with)
+-   I think the dictionaries w/ the meanings was an overall win
+-   Copy the input AND the test input right away to avoid weird errors
+-   Tests should have asserts from the get-go to avoid having to type them in
+-   Input files shouldn't have a newline at the end (certainly not by default)
+-   This was faster (~35 minutes to solve both parts), but it was also an easier
+    problem IMO
 """
 from typing import List, Tuple
 
@@ -100,6 +125,7 @@ def test_first_example():
 
 
 def get_needed_shape(shape: str, outcome: str) -> str:
+    # TODO: What's a more elegant way to do this?
     if outcome == "win":
         if shape == "R":
             return "P"
@@ -152,3 +178,4 @@ if __name__ == "__main__":
     test_second_example()
     result = part2(input)
     print(f"part 2: {result}")
+    assert result == 13433
