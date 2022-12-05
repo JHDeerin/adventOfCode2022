@@ -12,7 +12,7 @@ they carrying?
 
 OUTCOME: Got it right! (69501)
 
-PART 2: TODO
+PART 2: The elves want to know the sum of the top 3 elves categories
 
 OUTCOME: TODO
 
@@ -30,6 +30,8 @@ def parse_elf_inventories(input: List[str]) -> List[List[int]]:
         except ValueError:
             elf_inventories.append(current_elf)
             current_elf = []
+    if current_elf:
+        elf_inventories.append(current_elf)
     return elf_inventories
 
 
@@ -46,13 +48,15 @@ def test_first_example():
 
 
 def part2(input: List[str]):
-    pass
+    elf_inventories = parse_elf_inventories(input)
+    elf_calories = [sum(elf) for elf in elf_inventories]
+    return sum(sorted(elf_calories)[-3:])
 
 
 def test_second_example():
     with open("test.txt") as file:
         test_input = file.read().splitlines()
-    assert part2(test_input) == 0
+    assert part2(test_input) == 45000
 
 
 if __name__ == "__main__":
