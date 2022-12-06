@@ -13,6 +13,11 @@ PART 1: Find the crates at the top of each stack.
 -   For the parsing, can split the file at the newline; then, parse initial
     stacks from the first part (before the newline), and then parse the moves
     from the second part.
+    -   Actually, for parsing the stacks, can note that the stacks are in
+        regular intervals - so once we know the exact number of stacks, then we
+        know the exact index for a particular stack. We can get the number of
+        stacks if we start at the bottom (which should help with builing the
+        stacks anyway).
 
 OUTCOME: TODO
 
@@ -22,11 +27,55 @@ OUTCOME: TODO
 
 REFLECTIONS: TODO
 """
-from typing import List
+import re
+from typing import List, Tuple
 
 
-def part1(input: List[str]):
-    pass
+def parse_initial_stacks(input: str) -> List[List[str]]:
+    stacks = []
+    for i, line in enumerate(reversed(input.splitlines())):
+        if i == 0:
+            num_stacks = (len(line) + 2)//4
+            stacks = [[] for i in range(num_stacks)]
+            continue
+        for j in range(len(stacks)):
+            try:
+                char = line[j*4 + 1]
+                if char.strip():
+                    stacks[j].append(char)
+            except IndexError:
+                pass
+    return stacks
+
+
+def parse_move(input: str) -> Tuple[int, int, int]:
+    """Move will be tuple of (n, src, dest)"""
+    num_strs = re.findall(r"\d+", input)
+    return [int(num_str) for num_str in num_strs]
+
+
+def parse_moves(input: str) -> List[Tuple[int, int, int]]:
+    moves = []
+    for line in input.splitlines():
+        moves.append(parse_move(line))
+    return moves
+
+
+def parse_stacks(input: List[str]) -> Tuple[List[List[str]], List[Tuple[int, int, int]]]:
+    initial_stack_input, moves_input = "\n".join(input).split("\n\n")
+    return parse_initial_stacks(initial_stack_input), parse_moves(moves_input)
+
+
+def apply_moves(stacks: List[List[str]], moves: List[Tuple[int, int, int]]):
+    for n, src, dest in moves:
+        for i in range(n):
+            stacks[dest-1].append(stacks[src-1].pop())
+
+
+def part1(input: List[str]) -> str:
+    stacks, moves = parse_stacks(input)
+    apply_moves(stacks, moves)
+    return "".join([stack[-1] for stack in stacks])
 
 
 def test_first_example():
@@ -52,6 +101,7 @@ if __name__ == "__main__":
     test_first_example()
     result = part1(input)
     print(f"part 1: {result}")
+    assert result == "HNSNMTLHQ"
 
     test_second_example()
     result = part2(input)
