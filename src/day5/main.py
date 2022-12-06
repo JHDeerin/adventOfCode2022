@@ -19,9 +19,15 @@ PART 1: Find the crates at the top of each stack.
         stacks if we start at the bottom (which should help with builing the
         stacks anyway).
 
-OUTCOME: TODO
+OUTCOME: Got it right! (HNSNMTLHQ)
+-   The logic ended up taking me a second; I had a few bugs to iron out when
+    initially parsing the stacks (out-of-range error w/ the indices, then
+    forgetting to check if char was a space (and if so ignore it instead of
+    adding it to a stack))
 
-PART 2: TODO
+PART 2: Now, instead of moving 1 crate at a time, a move operation moves ALL the
+crates at once while preserving their order. Find the same thing BUT with the
+new movement behavior
 
 OUTCOME: TODO
 
@@ -72,6 +78,12 @@ def apply_moves(stacks: List[List[str]], moves: List[Tuple[int, int, int]]):
             stacks[dest-1].append(stacks[src-1].pop())
 
 
+def apply_order_preserve_moves(stacks: List[List[str]], moves: List[Tuple[int, int, int]]):
+    for n, src, dest in moves:
+        for i in range(n):
+            stacks[dest-1].append(stacks[src-1].pop())
+
+
 def part1(input: List[str]) -> str:
     stacks, moves = parse_stacks(input)
     apply_moves(stacks, moves)
@@ -91,7 +103,7 @@ def part2(input: List[str]):
 def test_second_example():
     with open("test.txt") as file:
         test_input = file.read().splitlines()
-    assert part2(test_input) == 0
+    assert part2(test_input) == "MCD"
 
 
 if __name__ == "__main__":
