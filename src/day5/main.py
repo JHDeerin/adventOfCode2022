@@ -80,8 +80,8 @@ def apply_moves(stacks: List[List[str]], moves: List[Tuple[int, int, int]]):
 
 def apply_order_preserve_moves(stacks: List[List[str]], moves: List[Tuple[int, int, int]]):
     for n, src, dest in moves:
-        for i in range(n):
-            stacks[dest-1].append(stacks[src-1].pop())
+        moved_reversed = [stacks[src-1].pop() for i in range(n)]
+        stacks[dest-1] += list(reversed(moved_reversed))
 
 
 def part1(input: List[str]) -> str:
@@ -97,7 +97,9 @@ def test_first_example():
 
 
 def part2(input: List[str]):
-    pass
+    stacks, moves = parse_stacks(input)
+    apply_order_preserve_moves(stacks, moves)
+    return "".join([stack[-1] for stack in stacks])
 
 
 def test_second_example():
@@ -118,3 +120,4 @@ if __name__ == "__main__":
     test_second_example()
     result = part2(input)
     print(f"part 2: {result}")
+    assert result = "RNLFDJMCT"
