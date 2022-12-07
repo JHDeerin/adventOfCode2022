@@ -14,29 +14,29 @@ REFLECTIONS: TODO
 from typing import List
 
 
-def part1(input: List[str]):
+def part1(input: str):
     pass
 
 
 def test_first_example():
     with open("test.txt") as file:
-        test_input = file.read().splitlines()
+        test_input = file.read()
     assert part1(test_input) == 0
 
 
-def part2(input: List[str]):
+def part2(input: str):
     pass
 
 
 def test_second_example():
     with open("test.txt") as file:
-        test_input = file.read().splitlines()
+        test_input = file.read()
     assert part2(test_input) == 0
 
 
 if __name__ == "__main__":
     with open("input.txt") as file:
-        input = file.read().splitlines()
+        input = file.read()
 
     test_first_example()
     result = part1(input)
