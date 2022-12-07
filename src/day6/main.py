@@ -7,7 +7,7 @@ OUTCOME: Got it right! (1582)
 
 PART 2: TODO
 
-OUTCOME: TODO
+OUTCOME: Got it right! (3588)
 
 REFLECTIONS: TODO
 """
@@ -35,13 +35,15 @@ def test_first_example():
 
 
 def part2(input: str):
-    pass
+    packet_start_index = find_packet_start_index(input, marker_len=14)
+    assert packet_start_index is not None
+    return packet_start_index
 
 
 def test_second_example():
     with open("test.txt") as file:
         test_input = file.read()
-    assert part2(test_input) == 0
+    assert part2(test_input) == 19
 
 
 if __name__ == "__main__":
