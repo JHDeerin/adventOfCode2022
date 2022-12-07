@@ -3,7 +3,7 @@ As we head to the star groves, the elves hand us a communication device. To comm
 
 PART 1: How many characters need to be processed before the first start-of-packet marker? (min possible is four)
 
-OUTCOME: TODO
+OUTCOME: Got it right! (1582)
 
 PART 2: TODO
 
@@ -14,13 +14,23 @@ REFLECTIONS: TODO
 from typing import List
 
 
+def find_packet_start_index(input: str, marker_len: int) -> int:
+    for i in range(marker_len,len(input)):
+        if len(set(input[i-marker_len:i])) == marker_len:
+            return i
+    return None
+
+
 def part1(input: str):
-    pass
+    packet_start_index = find_packet_start_index(input, marker_len=4)
+    assert packet_start_index is not None
+    return packet_start_index
 
 
 def test_first_example():
     with open("test.txt") as file:
         test_input = file.read()
+    print(part1(test_input))
     assert part1(test_input) == 7
 
 
