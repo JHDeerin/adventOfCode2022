@@ -14,23 +14,37 @@ PART 2: The total disk space of the device is 70000000 bytes; you need 30000000 
 
 OUTCOME: Got it right! (4978279)
 
-REFLECTIONS: TODO
+REFLECTIONS:
+- Okay, the first part took me FOREVER (like almost an hour), but then the 2nd part went pretty quick (<5 mniutes). A lot of it was me remembering how to make a tree; I also probably should've made some smaller unit tests (I was definitely nervous coding these larger parsing pieces without intermediate tests; I compensated via print-line debugging, and the nerves probably slowed me down more than the actual errors, but still)
+- The regex took me a bit to remember; I had to look up a few things, and probably didn't need regex at all (splitting would've been totally sufficient).
+- Couldn't remember how to code DFS exactly (knew it was appending nodes to a stack, but forgot how to avoid visiting previous nodes - although with a tree it should be a DAG anyway?), so I fell back to a flood fill (which for this problem is totally sufficient, but not great)
+- I think my overall approach was fine, it just took me awhile to think through each individual piece.
+- Looking at other solutions:
+    -   betaveros: Solved this in just 5 minutes, holy cow (2 minutes faster than the runner up; the top 100 was barely within 15 minutes)
+        -   He parsed the CLI input in by breaking on spaces, then just did a switch statement for each possible condition (e.g. `case ('$', 'cd', '/')`) - smart
+        -   He assumed each directory would be ls'd exactly once, so he ignored ls commands, then kept the current working directory path as an array, and the file size for each dir in a dictionary. For `cd x` commands he'd append to the path, for `cd ..` commands he'd pop, and for files he'd iterate through all the subpaths of the CWD and add the size of each one to the dictionary.
+        -   So, for the first part, he then just got all the size values in the dictionary, filtered, and summed
+        -   For the 2nd part, he got the needed size, then filtered to get all he sizes under that, then got the `.min()` of the list
+        -   So, yeah - smart use of constraints to speed up the problem
+    -   oliver-ni: actually scarily similar to betaveros's solution
+        -   The 1st part solution is literally identical, just in Python (and he used the `Path` class instead of an array) - and, I guess, he only cared about 2 cases (because of the Path class, was able to handle the `cd ..` command for free)
+        -   For the 2nd part, also did the same thing - filtered, then took the min (I guess that is simpler to fit into headspace than sorting and searching; neat)
 """
 import re
 from dataclasses import dataclass, field
-from typing import Dict, List, Set
+from typing import Dict, List, Optional
 
 
 @dataclass
 class File:
 
     name: str
-    parent: "File" = None
+    parent: Optional["File"] = None
     children: Dict[str, "File"] = field(default_factory=dict)
     size: int = 0
 
     def is_dir(self) -> bool:
-        return self.children
+        return bool(self.children)
 
     def add_file(self, file: "File"):
         file.parent = self
@@ -38,7 +52,7 @@ class File:
         self.update_size(self, file.size)
 
     @classmethod
-    def update_size(cls, current_dir: "File", change_size: int):
+    def update_size(cls, current_dir: Optional["File"], change_size: int):
         if current_dir is None:
             return
         current_dir.size += change_size
@@ -61,8 +75,8 @@ class File:
         return dirs
 
 
-def apply_command(line: str, current_dir: File) -> File:
-    command_match: re.Match = re.match(r"\$ (cd|ls)\s?(.+)?", line)
+def apply_command(line: str, current_dir: Optional[File]) -> File:
+    command_match: Optional[re.Match] = re.match(r"\$ (cd|ls)\s?(.+)?", line)
     command = command_match.group(1)
     assert command in ["cd", "ls"]
     if command == "ls":
@@ -78,7 +92,7 @@ def apply_command(line: str, current_dir: File) -> File:
 
 
 def make_file(line: str) -> File:
-    file_match: re.Match = re.match(r"(.+) (.+)", line)
+    file_match: Optional[re.Match] = re.match(r"(.+) (.+)", line)
     size, name = file_match.group(1), file_match.group(2)
     if size.isnumeric():
         return File(name=name, size=int(size))
@@ -91,7 +105,7 @@ def get_file_structure(input: List[str]) -> File:
         is_command = line[0] == "$"
         if is_command:
             current_dir = apply_command(line, current_dir)
-        else:
+        elif current_dir:
             current_dir.add_file(make_file(line))
     current_dir = File.get_root(current_dir)
     return current_dir
