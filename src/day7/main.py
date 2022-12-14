@@ -6,11 +6,13 @@ PART 1: Given a set of commands that traverses all files in a system, what is th
 - Need to also travel up, so have nodes also link to their parents?
 - This is a less-quick one, but doable just need to not panic (it's been forever since I've coded a tree)
 
-OUTCOME: TODO
+OUTCOME: Took FOREVER, but got it right first try! (1844187)
 
-PART 2: TODO
+PART 2: The total disk space of the device is 70000000 bytes; you need 30000000 of unused space. Get the size of the smallest directory that would free up enough space.
+- Get the amount of free space we need (needed size - (max size - size of root))
+- Get all directories, sorted by ascending size, and find the smallest one >= the size we need (could do a binary search, I'm just gonna iterate linearly)
 
-OUTCOME: TODO
+OUTCOME: Got it right! (4978279)
 
 REFLECTIONS: TODO
 """
@@ -69,7 +71,7 @@ def apply_command(line: str, current_dir: File) -> File:
     if new_dir_name == ".." and current_dir:
         return current_dir.parent
     if new_dir_name == "/" and current_dir:
-        return current_dir.parent
+        return File.get_root(current_dir)
     if not current_dir:
         return File(name=new_dir_name)
     return current_dir.children[new_dir_name]
@@ -98,25 +100,31 @@ def get_file_structure(input: List[str]) -> File:
 def part1(input: str) -> int:
     root_directory = get_file_structure(input.splitlines())
     directories = File.get_directories(root_directory)
-    print([f"{dir.name}: {dir.size}" for dir in directories])
     return sum(dir.size for dir in directories if dir.size <= 100000)
 
 
 def test_first_example():
     with open("test.txt") as file:
         test_input = file.read()
-    print(part1(test_input))
     assert part1(test_input) == 95437
 
 
 def part2(input: str):
-    pass
+    root_directory = get_file_structure(input.splitlines())
+    directories = File.get_directories(root_directory)
+    total_space, required_space = 70000000, 30000000
+    space_available = total_space - root_directory.size
+    space_needed = (required_space - space_available)
+    for dir in sorted(directories, key=lambda x: x.size):
+        if dir.size >= space_needed:
+            return dir.size
+    raise ValueError("No directory big enough to delete")
 
 
 def test_second_example():
     with open("test.txt") as file:
         test_input = file.read()
-    assert part2(test_input) == 0
+    assert part2(test_input) == 24933642
 
 
 if __name__ == "__main__":
@@ -126,7 +134,9 @@ if __name__ == "__main__":
     test_first_example()
     result = part1(input)
     print(f"part 1: {result}")
+    assert result == 1844187
 
     test_second_example()
     result = part2(input)
     print(f"part 2: {result}")
+    assert result == 4978279
