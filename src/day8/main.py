@@ -1,7 +1,9 @@
 """
-TODO
+We get a 2D map representing the height of trees in an area (represented from 0 to 9, a single digit). We say a tree is "visible" if all the trees in one direction (up to the edge of the grid) are shorter than it (so, all trees at the edge of the grid are obviously visible).
 
-PART 1: TODO
+PART 1: How many trees are visible from outside the grid?
+- Parse the grid into a 2D array
+- Then, iterate over each tree and find if it's visible (just go in each)
 
 OUTCOME: TODO
 
@@ -14,14 +16,15 @@ REFLECTIONS: TODO
 from typing import List
 
 
-def part1(input: str):
+def part1(input: str) -> int:
+    grid = get_grid(input)
     pass
 
 
 def test_first_example():
     with open("test.txt") as file:
         test_input = file.read()
-    assert part1(test_input) == 0
+    assert part1(test_input) == 21
 
 
 def part2(input: str):
