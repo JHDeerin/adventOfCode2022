@@ -11,7 +11,20 @@ PART 2: The elves want a scenic view; find the max "scenic score" for a tree (th
 
 OUTCOME: Got it right! (330786)
 
-REFLECTIONS: TODO
+REFLECTIONS:
+-   Both parts took too long (40 minutes total; part 1 took 20 minutes, part 2 took 15 - which it really shouldn't have)
+-   Got really slowed down by 2 bugs:
+    -   In part 1, I forgot to check the visibility in a single direction
+    -   In part 2, I reversed the wrong list, throwing off my answer
+    -   Checking a 2D line threw my brain for a loop for some reason; I don't think I did this cleanly (feels like there has to be a more efficient way)
+-   Intermediate test cases for individual trees would've helped
+-   Looking at other people's solutions:
+    - betaveros
+        -   Having trouble actually understanding his solution; same basic idea of have a function that gets the "rays" (the heights of the trees in the 4 directions - implements them in some interesting language-specific way where he defines the delta and iterates to the end of the grid), but then he does it in a functional style where for each of those "rays" he checks if all of a ray is under the current height, then does any() to get them all together. He then iterates over the whole map w/ a double for-loop to get a list of booleans and sums them
+        - For the 2nd part, he takes the max of a double-for loop again, and this time for all the rays in the 4 directions marches 1, breaks when the height is >= to the current tree, then does the product (similar to my solution but more concise)
+    -   oliver-ni
+        -   First part was very similar ot my solution; read the grid, iterated over rows/cols, then in the 4 directions like how I did, but then used Python's all() + or function to check visibility for each direction
+        -   For the 2nd part, I actually think I had a cleaner solution (he did the same thing, but without the reversal, and he had 4 for loops)
 """
 from math import prod
 from typing import List
