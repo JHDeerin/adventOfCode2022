@@ -5,14 +5,15 @@ PART 1: How many trees are visible from outside the grid?
 - Parse the grid into a 2D array
 - Then, iterate over each tree and find if it's visible (just go in each)
 
-OUTCOME: Got it! (1814)
+OUTCOME: Got it! (1814) (did waste time on a misunderstanding, trying to find the visibility for a whole row instead of the halves of the row separately)
 
-PART 2: TODO
+PART 2: The elves want a scenic view; find the max "scenic score" for a tree (the distances it can see in all 4 directions, multiplied).
 
-OUTCOME: TODO
+OUTCOME: Got it right! (330786)
 
 REFLECTIONS: TODO
 """
+from math import prod
 from typing import List
 
 
@@ -62,14 +63,49 @@ def test_first_example():
     assert part1(test_input) == 21
 
 
+def scenic_score(grid: List[List[int]], row: int, col: int) -> int:
+    tree_height = grid[row][col]
+
+    left_heights = grid[row][0:col]
+    right_heights = grid[row][col+1:]
+    above_heights = [grid[i][col] for i in range(row)]
+    below_heights = [grid[i][col] for i in range(row+1, len(grid))]
+
+    # reverse left/above so the 1st index is closest tree
+    left_heights.reverse()
+    above_heights.reverse()
+
+    direction_scores = []
+    for heights in [left_heights, right_heights, above_heights, below_heights]:
+        trees_visible = 0
+        for height in heights:
+            trees_visible += 1
+            if height >= tree_height:
+                break
+        direction_scores.append(trees_visible)
+    print(direction_scores)
+    return prod(direction_scores)
+
+
+def get_scenic_scores(grid: List[List[int]]) -> List[int]:
+    scores = []
+    for row in range(len(grid)):
+        for col in range(len(grid[0])):
+            scores.append(scenic_score(grid, row, col))
+    return scores
+
+
 def part2(input: str):
-    pass
+    grid = get_grid(input)
+    scenic_scores = get_scenic_scores(grid)
+    return max(scenic_scores)
 
 
 def test_second_example():
     with open("test.txt") as file:
         test_input = file.read()
-    assert part2(test_input) == 0
+    print(part2(test_input))
+    assert part2(test_input) == 8
 
 
 if __name__ == "__main__":
@@ -84,3 +120,4 @@ if __name__ == "__main__":
     test_second_example()
     result = part2(input)
     print(f"part 2: {result}")
+    assert result == 330786
