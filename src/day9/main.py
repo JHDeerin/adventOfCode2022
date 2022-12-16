@@ -12,10 +12,13 @@ OUTCOME: Got it right! (6284) (Had a stupid bug where I typed one of the directi
 PART 2: The rope is now 10 knots long; the 1st knot is the head, the 2nd follows the 1st as its head, the 3rd follows the 2nd as its head, etc. Find how many the new "tail" (the 10th knot) visits.
 - Okay, so now, I want to pass in a list of "rope" positions, move the first one, and then update the rest
 
-OUTCOME: Got it wrong the first time with 2639 (too low - didn't use both test cases - but the 2nd test case still passed!?WTF!?)
+OUTCOME: Got it wrong the first time with 2639 (too low - didn't use both test cases - but the 2nd test case still passed!? WTF!?)
 -   Okay, the head moved to 7103 positions - so the right answer is between 2640 and 7103...
 -   Okay, printing out a visualization shows me that there are some disconnected islands where the tail somehow "jumped" and skipped a space...hmmm
     -   I guess my "snapping" logic somehow breaks down in some cases where multiple pieces shift at once? If I change the rope to instead just move 1 in the right direction, does that fix things?
+    -   Submitted again with 2683, but that's too HIGH! (okay, at least I have a range now); again, passing all the test cases?!?
+        -   Still seeing disconnected bits in the visulization, even with that logic...hmmm...
+-   Okay, change it to move just 1 at a time and...FINALLY, GOT IT! (2661)
 
 REFLECTIONS: TODO
 """
@@ -42,12 +45,14 @@ def snap_tail(head: Tuple[int, int], tail: Tuple[int, int],) -> Tuple[int, int]:
     x_diff, y_diff = head[0] - tail[0], head[1] - tail[1]
     if abs(x_diff) < 2 and abs(y_diff) < 2:
         return tail
-    # Snap tail to closest head position
-    if abs(x_diff) >= 2:
+    # Move tail closer to the head position
+    if abs(x_diff) != 0:
         # negative x_diff means tail is to the right, else to the left
-        return (head[0] + 1, head[1]) if x_diff < 0 else (head[0] - 1, head[1])
-    # negative y_diff means tail is above, else below
-    return (head[0], head[1] + 1) if y_diff < 0 else (head[0], head[1] - 1)
+        tail = (tail[0] - 1, tail[1]) if x_diff < 0 else (tail[0] + 1, tail[1])
+    if abs(y_diff) != 0:
+        # negative x_diff means tail is to the right, else to the left
+        tail = (tail[0], tail[1] - 1) if y_diff < 0 else (tail[0], tail[1] + 1)
+    return tail
 
 
 def play_movements(
@@ -149,3 +154,4 @@ if __name__ == "__main__":
 
     result = part2(input)
     print(f"part 2: {result}")
+    assert result == 2661
