@@ -19,8 +19,59 @@ OUTCOME: Got it wrong the first time with 2639 (too low - didn't use both test c
     -   Submitted again with 2683, but that's too HIGH! (okay, at least I have a range now); again, passing all the test cases?!?
         -   Still seeing disconnected bits in the visulization, even with that logic...hmmm...
 -   Okay, change it to move just 1 at a time and...FINALLY, GOT IT! (2661)
+    -   Now, let's try and find a test case where my original logic would break (i.e. a head move that would move the tail more than 2 manhattan distance in a single update...)
+    -   AH, I think I got it: imagine if there were multiple knots in a diagonal line, like this:
+                                #
+                                 #
+                                  #
+                                   #
+    -   Now, if the head knot moved to the left 1, then my original logic would've looked like this...
+                               #
+                                 *
+                                  *
+                                   *
 
-REFLECTIONS: TODO
+                               ##
+
+                                  *     (note how it's 2 away in both Y and X)
+                                   *
+
+                               ###
+
+                                        (original logic checks X axis first)
+                                   *
+
+                               ####
+    -   However, what we expect to happen is actually this:
+                               #
+                                 *
+                                  *
+                                   *
+
+                               ##
+
+                                  *
+                                   *
+
+                               ##
+                                 #
+
+                                   *
+
+                               ##
+                                 #
+
+                                   *
+
+                               ##
+                                 #
+                                  #
+    -   So, yeah; my original "snapping" logic doesn't integrate properly when we have multiple pieces, and I failed to realize that
+
+REFLECTIONS:
+-   The 2nd part bug by FAR took the most time; major bugs are definitely the most time-consuming thing you can do
+    -   Even the first part had the small typo that threw me off for a few minutes; darn
+-   I am too tired to look at other people's solutions right now; I'll take a peek later
 """
 from typing import List, Tuple
 
