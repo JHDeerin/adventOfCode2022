@@ -7,7 +7,7 @@ PART 1: Assuming we start with the head and tail overlapping, how many distinct 
     -   To get the unique positions, record all the tail movements x/y tuples (or row/col?), then take the set
 
 
-OUTCOME: TODO
+OUTCOME: Got it right! (6284) (Had a stupid bug where I typed one of the direction keys wrong)
 
 PART 2: TODO
 
@@ -15,16 +15,75 @@ OUTCOME: TODO
 
 REFLECTIONS: TODO
 """
-from typing import List
+from typing import List, Tuple
 
 
-def part1(input: str):
-    pass
+direction_deltas = {
+    "U": (0, 1),
+    "D": (0, -1),
+    "R": (1, 0),
+    "L": (-1, 0),
+}
+
+
+def get_movements(input: str) -> List[Tuple[int, int]]:
+    movements = []
+    for line in input.splitlines():
+        direction, magnitude = line[0], int(line[2:])
+        movements += [direction_deltas[direction] for _ in range(magnitude)]
+    return movements
+
+
+def snap_tail(head: Tuple[int, int], tail: Tuple[int, int],) -> Tuple[int, int]:
+    x_diff, y_diff = head[0] - tail[0], head[1] - tail[1]
+    if abs(x_diff) < 2 and abs(y_diff) < 2:
+        return tail
+    # Snap tail to closest head position
+    if abs(x_diff) >= 2:
+        # negative x_diff means tail is to the right, else to the left
+        return (head[0] + 1, head[1]) if x_diff < 0 else (head[0] - 1, head[1])
+    # negative y_diff means tail is above, else below
+    return (head[0], head[1] + 1) if y_diff < 0 else (head[0], head[1] - 1)
+
+
+def play_movements(
+    moves: List[Tuple[int, int]],
+    head: Tuple[int, int],
+    tail: Tuple[int, int],
+) -> Tuple[List[Tuple[int, int]], List[Tuple[int, int]]]:
+    head_positions, tail_positions = [head], [tail]
+    for move in moves:
+        head = (head[0] + move[0], head[1] + move[1])
+        tail = snap_tail(head, tail)
+        head_positions.append(head)
+        tail_positions.append(tail)
+    return head_positions, tail_positions
+
+
+def test_snap_tail():
+    assert snap_tail((0,0), (0,0)) == (0,0)
+    assert snap_tail((0,0), (1,1)) == (1,1)
+    # above
+    assert snap_tail((0,0), (1,2)) == (0,1)
+    # below
+    assert snap_tail((0,0), (1,-2)) == (0,-1)
+    # left
+    assert snap_tail((0,0), (-2,-1)) == (-1,0)
+    # right
+    assert snap_tail((0,0), (2,-1)) == (1,0)
+
+
+def part1(input: str) -> int:
+    head_pos, tail_pos = (0,0), (0,0)
+    movements = get_movements(input)
+    head_positions, tail_positions = play_movements(movements, head_pos, tail_pos)
+    return len(set(tail_positions))
 
 
 def test_first_example():
     with open("test.txt") as file:
         test_input = file.read()
+    print(part1(test_input))
     assert part1(test_input) == 13
 
 
@@ -42,9 +101,13 @@ if __name__ == "__main__":
     with open("input.txt") as file:
         input = file.read()
 
+    assert get_movements("R 4") == [(1, 0), (1, 0), (1, 0), (1, 0)]
+    test_snap_tail()
+
     test_first_example()
     result = part1(input)
     print(f"part 1: {result}")
+    assert result == 6284
 
     test_second_example()
     result = part2(input)
